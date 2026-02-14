@@ -3,129 +3,183 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bingo 75 - Bolillo Circular</title>
+<title>Bingo 75 Dinámico</title>
 
 <style>
 body{
-    font-family: Arial, sans-serif;
-    text-align:center;
-    background:#f4f6f8;
-    margin:0;
-    padding:10px;
+font-family:Arial;
+text-align:center;
+margin:10px;
+background:#f2f2f2;
 }
 
 h1{
-    font-size:22px;
+margin:5px;
 }
 
-/* Bolillo circular */
-.bolillo{
-    width:140px;
-    height:140px;
-    border-radius:50%;
-    background:#ffcc00;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:40px;
-    font-weight:bold;
-    margin:20px auto;
-    box-shadow:0 0 20px rgba(0,0,0,0.4);
-    animation:none;
+#bolo{
+width:120px;
+height:120px;
+border-radius:50%;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:40px;
+font-weight:bold;
+margin:15px auto;
+color:white;
+box-shadow:0 6px 12px rgba(0,0,0,0.4);
+animation:rebote 1s infinite alternate;
 }
 
 @keyframes rebote{
-    0%{transform:translateY(0);}
-    50%{transform:translateY(-20px);}
-    100%{transform:translateY(0);}
+from{transform:translateY(0) rotate(0deg);}
+to{transform:translateY(-20px) rotate(20deg);}
 }
 
 button{
-    padding:12px 20px;
-    font-size:16px;
-    border:none;
-    border-radius:8px;
-    background:#007bff;
-    color:white;
+padding:12px 20px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#333;
+color:white;
+margin:10px;
 }
 
-.registro{
-    margin-top:20px;
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
+#registro{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:6px;
 }
 
-.numero{
-    width:35px;
-    height:35px;
-    margin:3px;
-    border-radius:50%;
-    background:#ddd;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:14px;
+.reg{
+padding:6px 8px;
+border-radius:6px;
+color:white;
+font-size:14px;
+box-shadow:0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* Responsive celular */
-@media(max-width:480px){
-    .bolillo{
-        width:110px;
-        height:110px;
-        font-size:32px;
-    }
+table{
+border-collapse:collapse;
+margin:auto;
+width:100%;
+max-width:400px;
+}
+
+th,td{
+border:1px solid #aaa;
+padding:8px;
+font-weight:bold;
+}
+
+td{
+cursor:pointer;
+background:white;
+}
+
+.marcado{
+background:#000;
+color:#fff;
+}
+
+@media(max-width:600px){
+#bolo{width:90px;height:90px;font-size:30px;}
 }
 </style>
 </head>
 
 <body>
 
-<h1>🎱 Bingo 75 - Bolillo Circular</h1>
+<h1>B I N G O</h1>
 
-<div class="bolillo" id="bolillo">?</div>
+<div id="bolo">?</div>
 
-<button onclick="sacarBolo()">Sacar bolo</button>
+<button onclick="sacarBolo()">Sacar Bolo</button>
 
-<div class="registro" id="registro"></div>
+<h3>Registro de Bolos</h3>
+<div id="registro"></div>
+
+<h3>Cartón Bingo</h3>
+<table id="tabla">
+<thead>
+<tr>
+<th>B</th>
+<th>I</th>
+<th>N</th>
+<th>G</th>
+<th>O</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
 
 <script>
-let numeros=[];
-for(let i=1;i<=75;i++){numeros.push(i);}
+let disponibles=[...Array(75).keys()].map(x=>x+1);
 let salidos=[];
 
-function colorBingo(n){
-    if(n<=15) return "red";
-    if(n<=30) return "blue";
-    if(n<=45) return "green";
-    if(n<=60) return "fuchsia";
-    return "gold";
+function colorBolo(n){
+if(n<=15) return "red";
+if(n<=30) return "blue";
+if(n<=45) return "green";
+if(n<=60) return "fuchsia";
+return "gold";
 }
 
 function sacarBolo(){
+if(disponibles.length===0)return;
 
-    if(numeros.length===0){
-        alert("Todos los bolos salieron");
-        return;
-    }
+let i=Math.floor(Math.random()*disponibles.length);
+let num=disponibles.splice(i,1)[0];
+salidos.push(num);
 
-    let index=Math.floor(Math.random()*numeros.length);
-    let numero=numeros.splice(index,1)[0];
-    salidos.push(numero);
+let bolo=document.getElementById("bolo");
+bolo.innerText=num;
+bolo.style.background=colorBolo(num);
 
-    let bolillo=document.getElementById("bolillo");
-    bolillo.innerText=numero;
-    bolillo.style.background=colorBingo(numero);
-    bolillo.style.animation="rebote 0.5s";
+let r=document.createElement("div");
+r.className="reg";
+r.style.background=colorBolo(num);
+r.innerText=num;
+document.getElementById("registro").appendChild(r);
 
-    setTimeout(()=>bolillo.style.animation="none",500);
-
-    let reg=document.getElementById("registro");
-    let div=document.createElement("div");
-    div.className="numero";
-    div.innerText=numero;
-    reg.appendChild(div);
+marcarNumero(num);
 }
+
+function generarTabla(){
+let cuerpo=document.querySelector("#tabla tbody");
+
+for(let f=0;f<5;f++){
+let tr=document.createElement("tr");
+
+for(let c=0;c<5;c++){
+let td=document.createElement("td");
+let rangoInicio=c*15+1;
+let num=Math.floor(Math.random()*15)+rangoInicio;
+
+td.innerText=num;
+td.onclick=function(){
+td.classList.toggle("marcado");
+}
+
+tr.appendChild(td);
+}
+cuerpo.appendChild(tr);
+}
+}
+
+function marcarNumero(n){
+let celdas=document.querySelectorAll("td");
+celdas.forEach(td=>{
+if(parseInt(td.innerText)===n){
+td.classList.add("marcado");
+}
+});
+}
+
+generarTabla();
 </script>
 
 </body>
