@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bingo 75 - Bolillo Circular</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    text-align:center;
+    background:#f4f6f8;
+    margin:0;
+    padding:10px;
+}
+
+h1{
+    font-size:22px;
+}
+
+/* Bolillo circular */
+.bolillo{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    background:#ffcc00;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+    font-weight:bold;
+    margin:20px auto;
+    box-shadow:0 0 20px rgba(0,0,0,0.4);
+    animation:none;
+}
+
+@keyframes rebote{
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-20px);}
+    100%{transform:translateY(0);}
+}
+
+button{
+    padding:12px 20px;
+    font-size:16px;
+    border:none;
+    border-radius:8px;
+    background:#007bff;
+    color:white;
+}
+
+.registro{
+    margin-top:20px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.numero{
+    width:35px;
+    height:35px;
+    margin:3px;
+    border-radius:50%;
+    background:#ddd;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+}
+
+/* Responsive celular */
+@media(max-width:480px){
+    .bolillo{
+        width:110px;
+        height:110px;
+        font-size:32px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎱 Bingo 75 - Bolillo Circular</h1>
+
+<div class="bolillo" id="bolillo">?</div>
+
+<button onclick="sacarBolo()">Sacar bolo</button>
+
+<div class="registro" id="registro"></div>
+
+<script>
+let numeros=[];
+for(let i=1;i<=75;i++){numeros.push(i);}
+let salidos=[];
+
+function colorBingo(n){
+    if(n<=15) return "red";
+    if(n<=30) return "blue";
+    if(n<=45) return "green";
+    if(n<=60) return "fuchsia";
+    return "gold";
+}
+
+function sacarBolo(){
+
+    if(numeros.length===0){
+        alert("Todos los bolos salieron");
+        return;
+    }
+
+    let index=Math.floor(Math.random()*numeros.length);
+    let numero=numeros.splice(index,1)[0];
+    salidos.push(numero);
+
+    let bolillo=document.getElementById("bolillo");
+    bolillo.innerText=numero;
+    bolillo.style.background=colorBingo(numero);
+    bolillo.style.animation="rebote 0.5s";
+
+    setTimeout(()=>bolillo.style.animation="none",500);
+
+    let reg=document.getElementById("registro");
+    let div=document.createElement("div");
+    div.className="numero";
+    div.innerText=numero;
+    reg.appendChild(div);
+}
+</script>
+
+</body>
+</html>
